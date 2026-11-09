@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Аудан табу — 4-сынып</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF1F8;--card:#FBFCFE;--ink:#13214D;--mute:#4A5678;--navy:#13214D;--gold:#F2B134;--fig:#BFD0FA;--line:#13214D;--ok:#1C7C54;--okbg:#DDF3E8;--bad:#B3361F;--badbg:#FBE4DE;--btn:#FFFFFF;--bd:#CBD3EA;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1633;--card:#16224D;--ink:#F4F6FB;--mute:#B9C3E0;--fig:#2E4A9A;--line:#F4F6FB;--ok:#7FE0B0;--okbg:#14382D;--bad:#FFA08C;--badbg:#4A2119;--btn:#1C2F6B;--bd:#2E3F7A}}
+:root[data-theme="dark"]{--bg:#0D1633;--card:#16224D;--ink:#F4F6FB;--mute:#B9C3E0;--fig:#2E4A9A;--line:#F4F6FB;--ok:#7FE0B0;--okbg:#14382D;--bad:#FFA08C;--badbg:#4A2119;--btn:#1C2F6B;--bd:#2E3F7A}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Montserrat',Arial,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:20px 16px 40px}
+.wrap{width:100%;max-width:720px;display:flex;flex-direction:column;gap:16px}
+h1{font-size:clamp(24px,5vw,34px);font-weight:800;line-height:1.15}
+.sub{color:var(--mute);font-size:15px;font-weight:500}
+.bar{height:12px;background:var(--bd);border-radius:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--gold);border-radius:8px;transition:width .4s}
+.meta{display:flex;justify-content:space-between;font-size:15px;font-weight:700}
+.card{background:var(--card);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:18px;box-shadow:0 6px 24px rgba(19,33,77,.10)}
+.q{font-size:clamp(18px,3.6vw,22px);font-weight:700;line-height:1.4}
+.fig{display:flex;justify-content:center;overflow-x:auto}
+.fig svg{max-width:100%;height:auto}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opts button{font:inherit;font-size:clamp(17px,3.4vw,20px);font-weight:700;color:var(--ink);background:var(--btn);border:2px solid var(--bd);border-radius:16px;padding:16px 8px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--gold)}
+.opts button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.opts button.bad{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.fb{border-radius:16px;padding:14px 16px;font-size:16px;font-weight:600;line-height:1.45;display:none}
+.fb.ok{display:block;background:var(--okbg);color:var(--ok)}
+.fb.bad{display:block;background:var(--badbg);color:var(--bad)}
+.go{font:inherit;font-size:18px;font-weight:800;background:var(--gold);color:#13214D;border:0;border-radius:16px;padding:16px;cursor:pointer;display:none}
+.go.show{display:block}
+.end{text-align:center;align-items:center}
+.stars{font-size:48px;letter-spacing:6px;color:var(--gold)}
+.big{font-size:64px;font-weight:800}
+.formula{background:var(--card);border-radius:16px;padding:12px 16px;font-size:15px;font-weight:600;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div><h1>Аудан табу</h1><p class="sub">4-сынып · математика · логикалық есептер</p></div>
+<p class="formula" id="formula">Тіктөртбұрыштың ауданы = ұзындығы × ені · Шаршының ауданы = қабырға × қабырға · Периметр = барлық қабырғаларының қосындысы</p>
+<div class="meta"><span id="step"></span><span id="score"></span></div>
+<div class="bar"><i id="prog"></i></div>
+<div class="card" id="card"></div>
+</div>
+<script>
+var Q=[
+{t:"Тіктөртбұрыштың ұзындығы 6 см, ені 4 см. Оның ауданы неге тең?",f:{k:"r",w:6,h:4,a:"6 см",b:"4 см",g:1},o:["10 см²","24 см²","20 см²","12 см²"],c:1,e:"6 × 4 = 24 (см²). Әр шаршы — 1 см²."},
+{t:"Шаршының қабырғасы 5 см. Ауданын тап.",f:{k:"r",w:5,h:5,a:"5 см",b:"5 см",g:1},o:["10 см²","20 см²","25 см²","15 см²"],c:2,e:"Шаршының барлық қабырғасы тең: 5 × 5 = 25 (см²)."},
+{t:"Тіктөртбұрыштың ұзындығы 9 см, ені 3 см. Ауданын тап.",f:{k:"r",w:9,h:3,a:"9 см",b:"3 см"},o:["27 см²","12 см²","24 см²","36 см²"],c:0,e:"9 × 3 = 27 (см²)."},
+{t:"Тіктөртбұрыштың ауданы 24 см², ұзындығы 8 см. Ені неше см?",f:{k:"r",w:8,h:3,a:"8 см",b:"? см",c2:"S = 24 см²"},o:["16 см","4 см","3 см","32 см"],c:2,e:"Ені = ауданы : ұзындығы = 24 : 8 = 3 (см)."},
+{t:"Шаршының периметрі 20 см. Оның ауданы неге тең?",f:null,o:["20 см²","16 см²","100 см²","25 см²"],c:3,e:"Шаршының 4 қабырғасы тең: 20 : 4 = 5 см. Ауданы 5 × 5 = 25 (см²)."},
+{t:"Тіктөртбұрыштың периметрі 18 см, ұзындығы 5 см. Ауданын тап.",f:null,o:["20 см²","45 см²","18 см²","25 см²"],c:0,e:"Жарты периметр: 18 : 2 = 9. Ені: 9 − 5 = 4 см. Ауданы: 5 × 4 = 20 (см²)."},
+{t:"6 × 4 тіктөртбұрыштың бұрышынан 2 × 2 шаршы кесіп алынды. Қалған фигураның ауданы қанша?",f:{k:"L"},o:["24 см²","16 см²","22 см²","20 см²"],c:3,e:"Бүтін фигура: 6 × 4 = 24. Кесілген бөлік: 2 × 2 = 4. Қалғаны: 24 − 4 = 20 (см²)."},
+{t:"А тіктөртбұрышы 7 × 3 см, Б шаршысының қабырғасы 5 см. Қайсысының ауданы үлкен?",f:null,o:["А — 21 см²","Б — 25 см²","Екеуі тең","Айту мүмкін емес"],c:1,e:"А: 7 × 3 = 21 см². Б: 5 × 5 = 25 см². 25 > 21, сондықтан Б үлкен."},
+{t:"Бөлменің еденінің ұзындығы 8 м, ені 5 м. Әр плитка 1 м². Неше плитка керек?",f:{k:"r",w:8,h:5,a:"8 м",b:"5 м",g:1},o:["13","26","45","40"],c:3,e:"Еденнің ауданы 8 × 5 = 40 (м²), яғни 40 плитка."},
+{t:"Бақтың ұзындығы 12 м, ені 6 м. Оның жартысына қызғалдақ егілді. Қызғалдақ егілген жердің ауданы қанша?",f:{k:"r",w:12,h:6,a:"12 м",b:"6 м"},o:["72 м²","36 м²","18 м²","30 м²"],c:1,e:"Бақтың ауданы 12 × 6 = 72 (м²). Жартысы: 72 : 2 = 36 (м²)."}
+];
+var i=0,pts=0,done=false;
+function svg(f){
+if(!f)return"";
+var W=360,H=210,s,x0,y0,out="";
+if(f.k==="L"){s=30;x0=(W-6*s)/2;y0=40;
+out+='<path d="M'+x0+','+y0+' h'+4*s+' v'+2*s+' h'+2*s+' v'+2*s+' h'+(-6*s)+' z" fill="var(--fig)" stroke="var(--line)" stroke-width="3"/>';
+for(var a=1;a<6;a++)out+='<line x1="'+(x0+a*s)+'" y1="'+y0+'" x2="'+(x0+a*s)+'" y2="'+(y0+4*s)+'" stroke="var(--line)" stroke-opacity=".25"/>';
+out+=tx(x0+3*s,y0+4*s+26,"6 см")+tx(x0-26,y0+2*s+5,"4 см")+tx(x0+5*s,y0-8,"2 см")+tx(x0+6*s+28,y0+s+5,"2 см");
+return '<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" role="img" aria-label="Кесілген бұрышы бар фигура">'+out+'</svg>';}
+s=Math.min(250/f.w,130/f.h);x0=(W-f.w*s)/2;y0=(H-f.h*s)/2-6;
+out+='<rect x="'+x0+'" y="'+y0+'" width="'+f.w*s+'" height="'+f.h*s+'" fill="var(--fig)" stroke="var(--line)" stroke-width="3"/>';
+if(f.g){for(var a=1;a<f.w;a++)out+='<line x1="'+(x0+a*s)+'" y1="'+y0+'" x2="'+(x0+a*s)+'" y2="'+(y0+f.h*s)+'" stroke="var(--line)" stroke-opacity=".25"/>';
+for(var b=1;b<f.h;b++)out+='<line x1="'+x0+'" y1="'+(y0+b*s)+'" x2="'+(x0+f.w*s)+'" y2="'+(y0+b*s)+'" stroke="var(--line)" stroke-opacity=".25"/>';}
+out+=tx(x0+f.w*s/2,y0+f.h*s+26,f.a)+tx(x0-30,y0+f.h*s/2+5,f.b);
+if(f.c2)out+=tx(x0+f.w*s/2,y0+f.h*s/2+5,f.c2);
+return '<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" role="img" aria-label="Тіктөртбұрыш">'+out+'</svg>';}
+function tx(x,y,t){return '<text x="'+x+'" y="'+y+'" text-anchor="middle" font-size="16" font-weight="700" fill="var(--line)" font-family="Montserrat,Arial,sans-serif">'+t+'</text>';}
+function show(){
+done=false;var q=Q[i],card=document.getElementById("card");
+document.getElementById("step").textContent="Есеп "+(i+1)+" / "+Q.length;
+document.getElementById("score").textContent="Ұпай: "+pts;
+document.getElementById("prog").style.width=(i/Q.length*100)+"%";
+var h='<p class="q"></p><div class="fig">'+svg(q.f)+'</div><div class="opts"></div><div class="fb" id="fb"></div><button class="go" id="go"></button>';
+card.className="card";card.innerHTML=h;
+card.querySelector(".q").textContent=q.t;
+var box=card.querySelector(".opts");
+q.o.forEach(function(t,k){var b=document.createElement("button");b.textContent=t;b.onclick=function(){pick(k)};box.appendChild(b);});
+}
+function pick(k){
+if(done)return;done=true;var q=Q[i],bs=document.querySelectorAll(".opts button"),fb=document.getElementById("fb"),go=document.getElementById("go");
+bs.forEach(function(b,n){b.disabled=true;if(n===q.c)b.className="ok";});
+if(k===q.c){pts++;fb.className="fb ok";fb.textContent="Дұрыс! Жарайсың! "+q.e;}
+else{bs[k].className="bad";fb.className="fb bad";fb.textContent="Қате емес, әлі де ойлан. "+q.e;}
+document.getElementById("score").textContent="Ұпай: "+pts;
+go.textContent=i<Q.length-1?"Келесі есеп →":"Нәтижені көру";go.className="go show";go.onclick=function(){i++;i<Q.length?show():finish();};
+}
+function finish(){
+document.getElementById("prog").style.width="100%";document.getElementById("step").textContent="Дайын!";
+var n=pts>=9?3:pts>=6?2:1,st="";for(var a=0;a<3;a++)st+=a<n?"★":"☆";
+var msg=pts>=9?"Тамаша! Сен аудан есептеудің шебері екенсің!":pts>=6?"Жарайсың! Тағы бір рет көріп, қателерді түзет.":"Жаман емес! Формулаларды қайталап, қайта көр.";
+var card=document.getElementById("card");card.className="card end";
+card.innerHTML='<div class="stars">'+st+'</div><div class="big">'+pts+' / '+Q.length+'</div><p class="q">'+msg+'</p><button class="go show" id="re">Қайта бастау</button>';
+document.getElementById("re").onclick=function(){i=0;pts=0;show();};
+}
+show();
+</script>
+</body>
+</html>
